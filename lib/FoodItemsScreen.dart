@@ -19,6 +19,7 @@ class _Pantry extends State<FoodItemsScreen> {
   );
 
   String barcode = "";
+  DateTime expirationDate = new DateTime.now();
 
   @override
   initState() {
@@ -81,6 +82,7 @@ class _Pantry extends State<FoodItemsScreen> {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
           "#004297", "Cancel", true, ScanMode.BARCODE);
       setState(() => this.barcode = barcode);
+      selectDate();
     } on PlatformException catch (e) {
       setState(() => this.barcode = 'Unknown error: $e');
     } on FormatException {
@@ -89,7 +91,26 @@ class _Pantry extends State<FoodItemsScreen> {
       setState(() => this.barcode = 'Unknown error: $e');
     }
   }
+
+  Future selectDate() async {
+    final DateTime today = DateTime.now();
+    final DateTime expirationDate =  await showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: today,
+      lastDate: DateTime.now().add(Duration(days: 356))
+    );
+
+    if(expirationDate != null){
+      setState(() {
+        this.expirationDate = expirationDate;
+        print(this.expirationDate.toString());
+      });
+    }
+  }
 }
+
+
 
 class DetailScreen extends StatelessWidget {
   @override
@@ -111,6 +132,7 @@ class DetailScreen extends StatelessWidget {
 class FoodItem {
   final String name;
   final String description;
+  //final DateTime expirationDate;
 
   FoodItem(this.name, this.description);
 }
