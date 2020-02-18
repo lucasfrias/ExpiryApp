@@ -1,0 +1,65 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/Pods_Runner.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "Pods-Runner-umbrella.h",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-umbrella.h"
+        },
+        {
+          'type': 'file',
+          'name': "Pods_Runner-Swift.h",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/Pods_Runner.framework/Headers/Pods_Runner-Swift.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/Pods_Runner.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Pods.build/Debug-iphoneos/Pods-Runner.build/module.modulemap"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/flutter_barcode_scanner/flutter_barcode_scanner.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "FlutterBarcodeScannerPlugin.h",
+          'external-contents': "/Users/lucasfrias/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_barcode_scanner-0.1.7/ios/Classes/FlutterBarcodeScannerPlugin.h"
+        },
+        {
+          'type': 'file',
+          'name': "flutter_barcode_scanner-Swift.h",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/flutter_barcode_scanner/flutter_barcode_scanner.framework/Headers/flutter_barcode_scanner-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "flutter_barcode_scanner-umbrella.h",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/Pods/Target Support Files/flutter_barcode_scanner/flutter_barcode_scanner-umbrella.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Debug-iphoneos/flutter_barcode_scanner/flutter_barcode_scanner.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/lucasfrias/AndroidStudioProjects/flutter_app/ios/build/Pods.build/Debug-iphoneos/flutter_barcode_scanner.build/module.modulemap"
+        }
+      ]
+    }
+  ]
+}
