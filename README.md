@@ -1,16 +1,7 @@
-# flutter_app
+Expiry!
 
-A new Flutter application for CS4990
+A Flutter application for CS4990.
 
-## Getting Started
+This application keeps track of the expiration date of food items. It allows you to add food items by scanning the barcode
+and manually entering the expiration date. You can keep track of your food and also make a grocery list with you expired items!
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
