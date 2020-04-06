@@ -8,8 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'FoodItem.dart';
+import 'local_notification.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
+LocalNotification localNotifications;
 
 class Pantry extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class Pantry extends StatefulWidget {
 class _PantryState extends State<Pantry>{
   @override
   void initState(){
+    localNotifications = new LocalNotification();
     super.initState();
   }
 
@@ -39,45 +42,58 @@ class _PantryState extends State<Pantry>{
                       ),
                     ),
                     body: FutureBuilder<List<FoodItem>>(
-                      future: DatabaseHelper.instance.retrieveFoods(),
+                      future: DatabaseHelper.instance.retrieveNonExpiredFoods(),
                       builder: (context, snapshot) {
                         if(snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: snapshot.data[index].imageUrl != "BlankImage.png" ? NetworkImage(snapshot.data[index].imageUrl) : Image.asset('assets/images/BlankImage.png', fit: BoxFit.scaleDown),
-                                ),
-                                title: Text(snapshot.data[index].name),
-                                subtitle: Text(snapshot.data[index].expirationDate),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailScreen(),
-                                      // Pass the arguments as part of the RouteSettings. The
-                                      // DetailScreen reads the arguments from these settings.
-                                      settings: RouteSettings(
-                                        arguments: snapshot.data[index],
+                          if(snapshot.data.length == 0){
+                            return Text("No food added yet! :(\nAdd some using the add button in the top right!");
+                          }
+                          else {
+                            return ListView.builder(
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: snapshot.data[index]
+                                        .imageUrl != "BlankImage.png"
+                                        ?
+                                    NetworkImage(snapshot.data[index].imageUrl)
+                                        :
+                                    Image.asset('assets/images/BlankImage.png',
+                                        fit: BoxFit.scaleDown),
+                                  ),
+                                  title: Text(snapshot.data[index].name),
+                                  subtitle: Text('Expires: ' +
+                                      _formatISO(snapshot.data[index].expirationDate)),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailScreen(),
+                                        // Pass the arguments as part of the RouteSettings. The
+                                        // DetailScreen reads the arguments from these settings.
+                                        settings: RouteSettings(
+                                          arguments: snapshot.data[index],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                                trailing: IconButton(
-                                  alignment: Alignment.center,
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () async {
-                                    ConfirmAction action = await _asyncConfirmDialog(context);
-                                    if(action == ConfirmAction.ACCEPT){
-                                      DatabaseHelper.instance.deleteFood(snapshot.data[index].id);
-                                    }
-                                    setState(() {});
+                                    );
                                   },
-                                ),
-                              );
-                            },
-                          );
+                                  trailing: IconButton(
+                                    alignment: Alignment.center,
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () async {
+                                      ConfirmAction action = await _asyncConfirmDialog(context);
+                                      if (action == ConfirmAction.ACCEPT) {
+                                        DatabaseHelper.instance.deleteFood(
+                                            snapshot.data[index].id);
+                                      }
+                                      setState(() {});
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         }else if(snapshot.hasError){
                           return Text("Error!" + snapshot.error.toString());
                         }
@@ -99,13 +115,56 @@ class _PantryState extends State<Pantry>{
                         .endTop
                 );
   }
+  
+  String _formatISO(String date){
+    var datetime = DateTime.parse(date.replaceFirstMapped(RegExp("(\\.\\d{6})\\d+"), (m) => m[1]));
+    return DateFormat.yMMMMd("en_US").format(datetime).toString();
+  }
 
   Future<void> test() async{
     var date = await selectDate(context);
-    DatabaseHelper.instance.addFood(new FoodItem(name: "TestFood",
-        imageUrl: "https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
-        expirationDate: DateFormat.yMMMMd("en_US").format(date).toString(),
-        expired: false));
+    setState(() {
+      /*DatabaseHelper.instance.addFood(new FoodItem(name: "TestFood",
+          imageUrl: "https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
+          expirationDate: DateFormat.yMMMMd("en_US").format(date).toString(),
+          expired: false));*/
+      DatabaseHelper.instance.addFood(new FoodItem(name: "TestFood",
+          imageUrl: "https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
+          expirationDate:// new DateTime.now().subtract(new Duration(days: 3)).toIso8601String(),
+          date.toIso8601String(),
+          expired: false));
+    });
+    //localNotifications.scheduleNotification("TestFood", date);
+  }
+
+  Future<void> addProduct() async {
+    try {
+      var barcode = await barcodeScanning();
+      // ignore: null_aware_in_logical_operator
+      if(barcode?.isNotEmpty && barcode != null){
+        var expirationDate = await selectDate(context);
+        if(expirationDate != null){
+          var product = await fetchProduct(barcode);
+          if(product != null){
+            setState(() {
+              DatabaseHelper.instance.addFood(new FoodItem(name: product.name,
+                  imageUrl: product.imageUrl,
+                  expirationDate: expirationDate.toIso8601String(),
+                  expired: false));
+            });
+            localNotifications.scheduleNotification(product.name, expirationDate);
+            //foods.add(FoodItem(product.name, product.imageUrl, expirationDate));
+            print("Successfully added item!");
+          }
+          else{
+            print("Product response from API was null!");
+          }
+        }
+      }
+      return null;
+    }catch(e){
+      print(e.toString());
+    }
   }
 
  Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
@@ -213,28 +272,6 @@ class _PantryState extends State<Pantry>{
 }
 */
 
-Future<void> addProduct(BuildContext context) async {
-  try {
-    var barcode = await barcodeScanning();
-    // ignore: null_aware_in_logical_operator
-    if(barcode?.isNotEmpty && barcode != null){
-      var expirationDate = await selectDate(context);
-      if(expirationDate != null){
-        var product = await fetchProduct(barcode);
-        if(product != null){
-          //foods.add(FoodItem(product.name, product.imageUrl, expirationDate));
-          print("Successfully added item!");
-        }
-        else{
-          print("Product response from API was null!");
-        }
-      }
-    }
-    return null;
-  }catch(e){
-    print(e.toString());
-  }
-}
 
 Future<String> barcodeScanning() async {
   try {

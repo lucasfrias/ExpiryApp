@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -37,12 +38,12 @@ class DatabaseHelper {
     db.delete(FoodItem.TABLENAME, where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<List<FoodItem>> retrieveFoods() async {
+  Future<List<FoodItem>> _retrieveFoods() async {
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query(FoodItem.TABLENAME);
+    final List<Map<String, dynamic>> maps = await db.query(FoodItem.TABLENAME, orderBy: 'expirationDate ASC');
 
-    return List.generate(maps.length, (i) {
+    List<FoodItem> foodList = List.generate(maps.length, (i) {
       return FoodItem(
         id: maps[i]['id'],
         name: maps[i]['name'],
@@ -51,6 +52,33 @@ class DatabaseHelper {
         expired: maps[i]['expired'] == 1,
       );
     });
+
+    for (var food in foodList){
+      if(DateTime.parse(DateTime.now().toIso8601String()).isAfter(DateTime.parse(food.expirationDate)) &&
+          (_formatISO(DateTime.now().toIso8601String()) != _formatISO(food.expirationDate))) {
+        food.expired = true;
+      }
+      //TODO: Change delete date to 7 days
+      DateTime deleteDate = DateTime.parse(food.expirationDate).add(new Duration(days: 2));
+      if(DateTime.parse(food.expirationDate).isAfter(deleteDate))
+        deleteFood(food.id);
+    }
+    return foodList;
+  }
+
+  Future<List<FoodItem>> retrieveNonExpiredFoods() async {
+    List<FoodItem> foodList = await DatabaseHelper.instance._retrieveFoods();
+    return foodList.where((food) => food.expired != true).toList();
+  }
+
+  Future<List<FoodItem>> retrieveExpiredFoods() async {
+    List<FoodItem> foodList = await DatabaseHelper.instance._retrieveFoods();
+    return foodList.where((food) => food.expired == true).toList();
+  }
+
+  String _formatISO(String date){
+    var datetime = DateTime.parse(date.replaceFirstMapped(RegExp("(\\.\\d{6})\\d+"), (m) => m[1]));
+    return DateFormat.yMMMMd("en_US").format(datetime).toString();
   }
 
 /*  updateFood(FoodItem food) async {

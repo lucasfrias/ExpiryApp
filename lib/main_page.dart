@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/pantry.dart';
 import 'package:http/http.dart' as http;
 
+import 'local_notification.dart';
+
 class MainPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
@@ -11,11 +13,11 @@ class MainPage extends StatelessWidget{
       body: PageView(
         physics: ClampingScrollPhysics(),
         children: <Widget>[
-          Pantry(),
-          RandomWordsPage(),
-          Center(
-              child: Text("Page 3 : Grocery List Page in progress")
-          )
+         //LocalNotificationWidget(),
+       //   RandomWordsPage(),
+       //   Center(
+       //       child: Text("Page 3 : Grocery List Page in progress")
+         // )
         ],
       ),
 
