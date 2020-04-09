@@ -7,7 +7,7 @@ import 'food_list_provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final  Color mainBlack = Color(0xFF383838);
+  //final  Color mainBlack = Color(0xFF383838);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
             brightness: Brightness.dark,
-            scaffoldBackgroundColor: mainBlack
+            scaffoldBackgroundColor: Colors.lightGreen
         ),
         home: FluidNavBarDemo()
       ),

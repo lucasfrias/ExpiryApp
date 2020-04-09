@@ -112,7 +112,7 @@ class _LocalNotificationWidgetState extends State<LocalNotificationWidget> {
     await flutterLocalNotificationsPlugin.schedule(
         0,
         'Hey you have food about to expire!',
-        foodName,
+        '$foodName will expire in 7 days.',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }

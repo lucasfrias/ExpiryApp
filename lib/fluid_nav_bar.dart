@@ -103,7 +103,7 @@ class _FluidNavBarState extends State<FluidNavBar> with TickerProviderStateMixin
           begin: Curves.easeInExpo.transform(_yController.value),
           end: inCurve.transform(_yController.value),
         ).transform(_yController.velocity.sign * 0.5 + 0.5),
-        Colors.black45,
+        Color(0xFF2E8B57),
       ),
     );
   }

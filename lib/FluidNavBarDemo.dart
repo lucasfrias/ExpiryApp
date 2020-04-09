@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ExpiredFood.dart';
+import 'package:flutter_app/GroceryListScreen.dart';
 import 'package:flutter_app/local_notification.dart';
 import 'package:flutter_app/pantry.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'local_notification.dart';
 import './fluid_nav_bar.dart';
-import 'home_screen.dart';
 
 class FluidNavBarDemo extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class FluidNavBarDemo extends StatefulWidget {
 
 class _FluidNavBarDemoState extends State {
   Widget _child;
-  final  Color mainBlack = Color(0xFF383838);
+  //final  Color mainBlack = Color(0xFF383838);
 
   @override
   void initState() {
@@ -29,8 +29,9 @@ class _FluidNavBarDemoState extends State {
     // Build a simple container that switches content based of off the selected navigation item
     return MaterialApp(
       theme: ThemeData(
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: mainBlack
+          brightness: Brightness.light,
+          appBarTheme: new AppBarTheme(color: Color(0xFF2E8B57)),
+          scaffoldBackgroundColor: Colors.white70
       ),
       home: Scaffold(
         extendBody: true,
@@ -51,8 +52,7 @@ class _FluidNavBarDemoState extends State {
         //_child = LocalNotificationWidget();
           break;
         case 2:
-          _child = Center(
-              child: Text("Page 3 : Grocery List Page in progress"));
+          _child = GroceryList();
           break;
       }
       _child = AnimatedSwitcher(
